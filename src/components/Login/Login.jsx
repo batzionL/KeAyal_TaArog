@@ -20,6 +20,7 @@ export default function Login() {
 
     const showPass = () => {
         setShowPassword((prev) => !prev);
+        console.log("test")
     };
 
     const getPatientUsername = () => {
