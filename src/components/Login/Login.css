@@ -1,0 +1,36 @@
+.far {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.clientsBtn{
+    width: 300px;
+}
+
+.oldClient{
+    background-color: LightCoral;  
+    color: white;               
+  }
+  
+  .newClient{
+    background-color: LightCoral;  
+    color: white;               
+  } 
+
+  .loginBtn{
+    background-color: skyblue; 
+    color: white;              
+    cursor: pointer;
+  }
+
+  .custom-btn:hover {
+    background-color: Linen;  
+  }
+
+  .firstAppointment{
+    background-color: rgb(201, 204, 33);  
+
+  }
