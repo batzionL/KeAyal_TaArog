@@ -1,18 +1,26 @@
 import { React, useEffect, useState } from 'react';
 import './TreatmentHistory.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function TreatmentHistory() {
 
     const location = useLocation();
-    const id = location.state;
-    // console.log('id - ', id);
+    const navigate = useNavigate();
+    // const isOwner = location.isOwner;
+    // alert(isOwner)
+    const [id, setId] = useState(location.state);
     const [treatment, setTreatment] = useState(null);
-    const [expandedIndex, setExpandedIndex] = useState(null); // Track which treatment is expanded
+    const [expandedIndex, setExpandedIndex] = useState(null);
     const [expandedDiv, setExpandedDiv] = useState(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(!id ? true : false);
+    // const [patientId, setPatientId] = useState("");
+    // const [patientDetails, setPatientDetails] = useState({});
+
 
     useEffect(() => {
-        getTreatmentsHistory();
+        if (!isPopupOpen) {
+            getTreatmentsHistory();
+        }
     });
 
     const getTreatmentsHistory = async () => {
@@ -43,11 +51,52 @@ export default function TreatmentHistory() {
     }
 
     const toggleExpand = (index) => {
-        setExpandedDiv(expandedDiv === index ? null : index); // משנה את המצב רק ל-div הספציפי
+        setExpandedDiv(expandedDiv === index ? null : index);
     };
+
+    const addTreatment = () => {
+        navigate('/NewTreatment', { state: id });
+        // window.location.href = "/NewTreatment";
+    }
+
+    // const getPatientDetails = async () => {
+    // try {
+    // const response = await fetch("/get_patient_details", {
+    // method: "POST",
+    // headers: {
+    // "Content-Type": "application/json",
+    // },
+    // body: JSON.stringify({
+    // patientId: id
+    // }),
+    // });
+    // if (response.ok) {
+    // const data = await response.json();
+    // setPatientDetails(data);
+    // setIsPopupOpen(prevState => !prevState);
+    // }
+    // else {
+    // const errorData = await response.json();
+    // alert(`Error: ${errorData.error}`);
+    // }
+    // } catch (error) {
+    // alert("Failed to validate owner: " + error.message);
+    // }
+    // }
+
 
     return (
         <center >
+            {isPopupOpen && (
+                <div className="popup-overlay">
+                    <div className="popup">
+                        <label>הכניסי תז של מטופלת
+                            <input value={id} onChange={(e) => setId(e.target.value)} />
+                        </label>
+                        <button onClick={() => setIsPopupOpen(false)}>הבא</button>
+                    </div>
+                </div>
+            )}
             <h1>היסטוריית טיפולים</h1>
             <div className="container">
                 {treatment && treatment.length > 0 ? (
@@ -56,7 +105,7 @@ export default function TreatmentHistory() {
                             onClick={() => toggleExpand(index)}>
                             <div onClick={() => clickOnDiv(index)}>
                                 <label><h4>תאריך טיפול: </h4>{new Date(treat.treatment_date).toLocaleDateString()}</label>
-                                <br/>
+                                <br />
                                 <label><h4>בעיה: </h4>{treat.problem}</label>
                                 {expandedIndex === index && (
                                     <>
@@ -70,6 +119,7 @@ export default function TreatmentHistory() {
                 )
                     : 'No treatment data available'}
             </div>
+            <button onClick={addTreatment}>הוספת טיפול</button>
         </center>
     )
 }

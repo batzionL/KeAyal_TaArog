@@ -100,16 +100,8 @@ export default function Login() {
         }
     }
 
-        // const backgroundStyle = {
-        //   backgroundImage: `url(${backgroundImage})`,
-        //   backgroundSize: 'cover',
-        //   backgroundPosition: 'center',
-        //   height: '100vh',
-        // };
-
     return (
         <div >
-            {/* <img className="backgroundStyle" /> */}
             <button onClick={isOwner} className="isOwner">מנהלת</button>
 
             <div style={{ display: isModalOpen ? "block" : "none" }} className="modal-overlay">
@@ -134,7 +126,7 @@ export default function Login() {
             </div>
 
             <div className="d-flex justify-content-center align-items-center vh-100">
-                <div className="p-4 bg-white rounded shadow-sm text-center clientsBtn" >
+                <div className="clientsBtn" >
                     <h1 className="mb-4">ברוכות הבאות</h1>
                     <button id="btnOldPatient" className="btn custom-btn mb-2 oldClient" onClick={OldPatient}>
                         מטופלת ותיקה
@@ -155,7 +147,7 @@ export default function Login() {
                     <button id="btnNewPatient" className="btn custom-btn mb-4 newClient" onClick={newPatient} style={{ display: !newBtn ? "block" : "none" }}>
                         מטופלת חדשה
                     </button>
-                    <button className="btn custom-button w-100 loginBtn" type="submit" onClick={validatePatient}>
+                    <button className="loginBtn" type="submit" onClick={validatePatient}>
                         כניסה
                     </button>
                 </div>

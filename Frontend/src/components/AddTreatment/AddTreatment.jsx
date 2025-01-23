@@ -1,36 +1,26 @@
-
-
-
-
-
-
-//צריך לסדר את התז של המטופלת, איך להכניס את זה לתוך הטיפול ולהצליח להוסיף טיפול 
-
-
-
-
-
-
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './AddTreatment.css';
-// import { data } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AddTreatment() {
 
-    const [isPopupOpen, setIsPopupOpen] = useState(true);
-    // const idRef = useRef(null);
+    const navigate=useNavigate();
+    const location = useLocation();
+    const [patientId, setPatientId] = useState(location.state);
+
+    // const [isPopupOpen, setIsPopupOpen] = useState(true);
     const [treatment, setTreatment] = useState({ patientId: "", treatment_date: "", problem: "", TherapeuticProcess: "", homeWork: "" });
     const [patientDetails, setPatientDetails] = useState({});
     const [age, setAge] = useState(null);
-    const [patientId, setPatientId] = useState("");
+    // const [patientId, setPatientId] = useState("");
 
-    // const[id,setId]=useState("");
     const today = new Date();
     const formattedDate = today.toLocaleDateString();
 
     useEffect(() => {
         if (patientId)
-            setTreatment({ ...treatment, patientId: patientId, treatment_date: today });
+            getPatientDetails();
+        setTreatment({ ...treatment, patientId: patientId, treatment_date: today });
     }, [patientId]);
 
     useEffect(() => {
@@ -60,7 +50,7 @@ export default function AddTreatment() {
             if (response.ok) {
                 const data = await response.json();
                 setPatientDetails(data);
-                setIsPopupOpen(prevState => !prevState);
+                // setIsPopupOpen(prevState => !prevState);
             }
             else {
                 const errorData = await response.json();
@@ -71,10 +61,6 @@ export default function AddTreatment() {
         }
     }
 
-    // const handleChangeId = (e) => {
-    // const { name, value } = e.target;
-    // setId({ ...id, [name]: value });
-    // }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -84,25 +70,18 @@ export default function AddTreatment() {
 
     const addTreatment = async (e) => {
         e.preventDefault();
-        // if (!treatment.patientId || treatment.patientId.trim() === "") {
-        // alert("Patient ID is required");
-        // return;
-        // }
-        // console.log('treatment - ', treatment)
         try {
             const response = await fetch("/add_treatment", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                // body: JSON.stringify({
-                    // ...treatment,
-                    // patient_id: idRef.current.value
-                // }),
                 body: JSON.stringify(treatment)
             });
-            if (response.ok)
+            if (response.ok) {
                 setTreatment({ patientId: "", treatment_date: "", problem: "", TherapeuticProcess: "", homeWork: "" });
+                navigate(-1);
+            }
             else {
                 const errorData = await response.json();
                 console.log("Error ", errorData);
@@ -117,20 +96,16 @@ export default function AddTreatment() {
 
     return (
         <div dir="rtl">
-            {isPopupOpen && (
-                <div className="popup-overlay">
-                    <div className="popup">
-                        <label>הכניסי תז של מטופלת
-                            {/* <input  name='id' */}
-                            {/* // value={id} */}
-                            {/* // onChange={handleChangeId} /> */}
-                            {/* <input ref={idRef} /> */}
-                            <input value={patientId} onChange={(e) => setPatientId(e.target.value)} />
-                        </label>
-                        <button onClick={getPatientDetails}>הבא</button>
-                    </div>
-                </div>
-            )}
+            {/* {isPopupOpen && ( */}
+            {/* <div className="popup-overlay"> */}
+            {/* <div className="popup"> */}
+            {/* <label>הכניסי תז של מטופלת */}
+            {/* <input value={patientId} onChange={(e) => setPatientId(e.target.value)} /> */}
+            {/* </label> */}
+            {/* <button onClick={getPatientDetails}>הבא</button> */}
+            {/* </div> */}
+            {/* </div> */}
+            {/* )} */}
 
             <center>
                 <h2>הוספת טיפול:</h2>
@@ -138,7 +113,6 @@ export default function AddTreatment() {
                 <div>
                     <label
                         name='patientId'
-                        // value={idRef.current.value}
                         onChange={handleChange}>
                     </label>
                 </div>
