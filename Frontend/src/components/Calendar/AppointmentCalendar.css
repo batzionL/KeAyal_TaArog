@@ -25,9 +25,10 @@ button:hover {
 
 .cellDay {
     background-color: beige;
-    padding: 50px;
-    height: 70px;
+    padding: 10px;
+    height: 120px;
 }
+
 
 .daysOfWeek {
     display: grid;
@@ -52,4 +53,26 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.close-modal-btn {
+    padding: 5px 15px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    margin-left: 190px;
+    transition: background-color 0.3s;
+}
+
+.close-modal-btn:hover {
+    background-color: #a71d2a;
+}
+
+.dayLabel {
+    font-weight: bold;
+}
+
+.events {
+    text-align: right;
 }
