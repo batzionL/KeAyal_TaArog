@@ -5,6 +5,7 @@ from datetime import datetime
 from models.patient import Patient
 from models.treatment import Treatment
 from models.owner import Owner
+from models.event import Event
 from flask_cors import CORS
 
 
@@ -55,7 +56,6 @@ def add_treatment():
         except ValueError:
             return jsonify({"error": "Invalid date format"}), 400
 
-
         new_treatment = Treatment(
             patientId=data["patientId"],
             treatment_date=treatment_date,
@@ -74,6 +74,24 @@ def add_treatment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+ 
+#Add event
+@app.route("/add_event", methods=["POST"])
+def add_event_to_calander():
+    data = request.json
+    print(f"Received event: {data}")
+    try:
+        new_event = Event(
+            eventDate=data["newDate"],
+            eventTime=data["newTime"],
+            freeOrBusy=data["freeOrBusy"]
+        )
+        new_event.save()
+        return jsonify({"message": "Event was added successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+ 
+ 
  
 #  Get patient
 @app.route("/get_patient", methods=["POST"])
@@ -149,6 +167,40 @@ def get_patient_treatments():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
+@app.route("/get_all_events", methods=["GET"])
+def get_all_events():
+    try:
+        events = Event.objects()
+        if events:
+            events_list = [
+                {
+                    "eventDate": event.eventDate,
+                    "eventTime": event.eventTime,
+                    "freeOrBusy": event.freeOrBusy
+                }
+                for event in events
+            ]
+            return jsonify(events_list), 201
+        else:
+            return jsonify({"error": "Events not found"}), 404
+    except Exception as e:
+        return jsonify({"Error: ": str(e)}), 400
+    
+    
+# @app.route('/get', methods=['GET'])
+# def get_data():
+# data = collection.find()  # מקבל את כל הנתונים מהאוסף
+# data_list = []
+# for item in data:
+# item['_id'] = str(item['_id'])  # MongoDB מוסיף _id אוטומטית, להמיר אותו למחרוזת
+# data_list.append(item)
+# return jsonify(data_list)
+# @app.route('/')
+# def hello():
+# return "Hello from Python backend!"
+
+    
  #Gat all treatments of patient
 # @app.route("/get_all_treatments", methods=["POST"])
 # def get_all_treatments():
@@ -174,17 +226,6 @@ def get_patient_treatments():
 # return jsonify({"message": "Data added successfully"}), 201
 
 
-# @app.route('/get', methods=['GET'])
-# def get_data():
-# data = collection.find()  # מקבל את כל הנתונים מהאוסף
-# data_list = []
-# for item in data:
-# item['_id'] = str(item['_id'])  # MongoDB מוסיף _id אוטומטית, להמיר אותו למחרוזת
-# data_list.append(item)
-# return jsonify(data_list)
-# @app.route('/')
-# def hello():
-# return "Hello from Python backend!"
 
 if __name__ == "__main__":
     app.run(debug=True)
