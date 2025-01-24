@@ -96,17 +96,6 @@ export default function AddTreatment() {
 
     return (
         <div dir="rtl">
-            {/* {isPopupOpen && ( */}
-            {/* <div className="popup-overlay"> */}
-            {/* <div className="popup"> */}
-            {/* <label>הכניסי תז של מטופלת */}
-            {/* <input value={patientId} onChange={(e) => setPatientId(e.target.value)} /> */}
-            {/* </label> */}
-            {/* <button onClick={getPatientDetails}>הבא</button> */}
-            {/* </div> */}
-            {/* </div> */}
-            {/* )} */}
-
             <center>
                 <h2>הוספת טיפול:</h2>
                 <br />

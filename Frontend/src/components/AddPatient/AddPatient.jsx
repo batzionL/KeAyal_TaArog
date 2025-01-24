@@ -25,7 +25,6 @@ function AddPatientForm() {
             });
 
             if (response.ok) {
-                // alert("Patient added successfully!");
                 setPatient({ firstName: "", lastName: "", patientId: "", email: "", password: "", phone: "", dateOfBirth: "", motherName: "" });
             } else {
                 const errorData = await response.json();

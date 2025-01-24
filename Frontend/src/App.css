@@ -1,4 +1,5 @@
 body::before {
+    direction: rtl;
     content: '';
     position: fixed;
     width: 100%;
