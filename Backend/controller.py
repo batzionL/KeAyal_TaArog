@@ -1,8 +1,11 @@
-from flask import request, jsonify
-from main import app
+from flask import Blueprint, request, jsonify
+# from main import app
 from service import add_patient_to_db, add_treatment_to_db, add_event_to_db, get_patient_from_db, get_patient_by_id_from_db, get_owner_from_db, get_patient_treatments_from_db, get_all_events_from_db, update_event_in_db
-    
-@app.route("/add_patient", methods=["POST"])
+  
+
+controller_bp = Blueprint("controller", __name__)
+  
+@controller_bp.route("/add_patient", methods=["POST"])
 def add_patient():
     try:
         data = request.json
@@ -16,7 +19,7 @@ def add_patient():
     
 
 
-@app.route("/add_treatment", methods=["POST"])
+@controller_bp.route("/add_treatment", methods=["POST"])
 def add_treatment():
     try:
         data = request.json
@@ -34,7 +37,7 @@ def add_treatment():
     
 
 
-@app.route("/add_event", methods=["POST"])
+@controller_bp.route("/add_event", methods=["POST"])
 def add_event():
     try:
         data = request.json
@@ -47,7 +50,7 @@ def add_event():
         return jsonify({"error": str(e)}), 500
     
 
-@app.route("/get_patient", methods=["POST"])
+@controller_bp.route("/get_patient", methods=["POST"])
 def validate_patient():
     try:
         data = request.json
@@ -59,10 +62,10 @@ def validate_patient():
         else:
             return jsonify({"error": "Patient not found"}), 404
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
     
     
-@app.route("/get_patient_id", methods=["POST"])
+@controller_bp.route("/get_patient_id", methods=["POST"])
 def get_patient():
   try:
       data = request.json
@@ -76,7 +79,7 @@ def get_patient():
       return jsonify({"error": str(e)}), 500
   
   
-@app.route("/get_owner", methods=["POST"])
+@controller_bp.route("/get_owner", methods=["POST"])
 def get_owner():
     try:
         data = request.json
@@ -90,7 +93,7 @@ def get_owner():
         return jsonify({"error": str(e)}), 500
     
 
-@app.route("/get_patient_details", methods=["POST"])
+@controller_bp.route("/get_patient_details", methods=["POST"])
 def get_patient_details():
     try:
         data = request.json
@@ -104,7 +107,7 @@ def get_patient_details():
         return jsonify({"error": str(e)}), 400
     
 
-@app.route("/get_patient_treatments", methods=["POST"])
+@controller_bp.route("/get_patient_treatments", methods=["POST"])
 def get_patient_treatments():
     try:
         data = request.json
@@ -127,7 +130,7 @@ def get_patient_treatments():
         return jsonify({"error": str(e)}), 500
     
 
-@app.route("/get_all_events", methods=["GET"])
+@controller_bp.route("/get_all_events", methods=["GET"])
 def get_all_events():
     try:
         answer = get_all_events_from_db()
@@ -148,7 +151,7 @@ def get_all_events():
     
 
 
-@app.route("/update_event", methods=["PUT"])
+@controller_bp.route("/update_event", methods=["PUT"])
 def update_event():
     try:
         data = request.json
@@ -168,5 +171,4 @@ def update_event():
         )
         return jsonify({"message": "Event updated successfully"}), 200
     except Exception as e:
-        print(f"Unexpected error: {str(e)}")
         return jsonify({"error": str(e)}), 500

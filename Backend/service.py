@@ -4,8 +4,6 @@ from models.treatment import Treatment
 from models.owner import Owner
 from models.event import Event
 
-
-# 
 def add_patient_to_db(data):
     try:
         new_patient = Patient(
@@ -23,8 +21,6 @@ def add_patient_to_db(data):
     except Exception as e:
         raise Exception(f"Error fetching patient: {str(e)}")
     
-
-# 
 def add_treatment_to_db(data):
     try:
         patient_id = data.get("patientId")
@@ -53,7 +49,6 @@ def add_treatment_to_db(data):
     except Exception as e:
         return {"Error fetching treatment": str(e)}
 
-# 
 def add_event_to_db(data):
     try:
         new_event = Event(
@@ -67,12 +62,9 @@ def add_event_to_db(data):
     except Exception as e:
         return {"Error fetching event": str(e)}
 
-# 
 def get_patient_from_db(patient_id, password):
-    # print(f"Fetching patient with ID: {patient_id} and Password: {password}")
     try:
         patient = Patient.objects(patientId=patient_id, password=password).first()
-        # print(patient)
         return patient
     except Exception as e:
         return {"Error fetching patient": str(e)}

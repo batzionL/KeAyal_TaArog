@@ -1,6 +1,7 @@
-from mongoengine import Document, StringField, DateField
+from mongoengine import Document, StringField, IntField
 
 class Event(Document):
-    eventDate = DateField(required=True)
+    eventDate = StringField(required=True)
     eventTime = StringField(required=True)
     freeOrBusy = StringField(required=True)
+    patientId = IntField(required=True)
