@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './AppointmentCalendar.css';
+import { HDate } from '@hebcal/core';
 
 export const AppointmentCalendar = () => {
 
@@ -11,6 +12,8 @@ export const AppointmentCalendar = () => {
     const [newDate, setNewDate] = useState("");
     const [newTime, setNewTime] = useState("");
     const [selectedDay, setSelectedDay] = useState(null);
+    const [saveEventPopup, setSaveEventPopup] = useState(false);
+    const [saveEvent, setSaveEvent] = useState(null);
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     const daysOfWeek = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
     const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
@@ -32,6 +35,7 @@ export const AppointmentCalendar = () => {
         }
     };
 
+    //
     const changeMonth = (direction) => {
         if (direction === 'prev') {
             setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));
@@ -42,6 +46,7 @@ export const AppointmentCalendar = () => {
         }
     };
 
+    //
     const openAddFreeTreatment = (day) => {
         const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         setNewDate(dateKey);
@@ -49,12 +54,14 @@ export const AppointmentCalendar = () => {
         setIsPopupOpen(true);
     };
 
+    //
     const addFreeTreatment = () => {
         if (selectedDay) {
             handleEventAdd(selectedDay);
         }
     };
 
+    //
     const addEventToDB = async () => {
         if (newDate && newTime) {
             const event = {
@@ -86,6 +93,7 @@ export const AppointmentCalendar = () => {
         }
     }
 
+    //
     const getAllEvents = async () => {
         try {
             const response = await fetch("/get_all_events", {
@@ -106,15 +114,93 @@ export const AppointmentCalendar = () => {
         }
     }
 
+    //
     const normalizeDate = (date) => {
         const localDate = new Date(date);
         localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset()); // Adjust for time zone
         return localDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
     };
 
-    const chooseAnAppointment = () => {
-        alert("hsgff");
+    const chooseAnAppointment = async (day, eventTime) => {
+        const id = prompt(`קביעת טיפול בתאריך ${day}/${currentMonth + 1}/${currentYear} - הכניסי ת.ז:`);
+        if (id !== "") {
+            const exists = await checkIfPatientExist(id);
+            if (exists) {
+                setSaveEventPopup(true);
+                const eventDate = new Date(Date.UTC(currentYear, currentMonth, day)).toISOString().split('T')[0];  // YYYY-MM-DD format
+                setSaveEvent({ id, eventDate, eventTime });
+            }
+            else {
+                alert("ת.ז כנראה אינה תקינה");
+            }
+        }
+        //עידכון האירוע  לתפוס וכתיבת שם המטופל ליד התאריך רק מנהל יכול לראות תשם
     }
+
+    //
+    const checkIfPatientExist = async (id) => {
+        try {
+            const response = await fetch("get_patient_id", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id })
+            });
+            if (response.ok) {
+                return true;
+            }
+            else {
+                const errorData = response.json();
+                console.log("Error: ", errorData);
+                return false;
+            }
+        }
+        catch (e) {
+            console.log("Failed to validate patient: ", e.message);
+            return false;
+        }
+    }
+
+    //
+    const closeModal = () => {
+        setSaveEventPopup(false);
+        alert("התור בוטל");
+    }
+
+    //
+    const updateEvent = async () => {
+        const event = {
+            id: saveEvent.id,
+            freeOrBusy: "תפוס",
+            eventDate: saveEvent.eventDate,
+            eventTime: saveEvent.eventTime
+        };
+        try {
+            const response = await fetch("update_event", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(event)
+            });
+            if (response.ok) {
+                alert("התור נשמר בהצלחה");
+                setSaveEventPopup(false);
+                //לנסות לאפשר שמירה ביומן של המטופל ושליחה ליומן של אימא
+            }
+            else {
+                const error = await response.json();
+                console.log("Error: ", error);
+            }
+        }
+        catch (e) {
+            console.log("Error: ", e.message);
+        }
+    }
+
+    //
+    const HebrewDate = (date) => {
+        const hebrewDate = new HDate(new Date(date)).toString("h");
+        return hebrewDate;
+    };
+
 
     const days = daysInMonth(currentYear, currentMonth);
     return (
@@ -142,10 +228,12 @@ export const AppointmentCalendar = () => {
                         const day = i + 1;
                         const dateKey = `${currentYear}-${currentMonth + 1}-${day}`;
 
-                        const normalizedDateKey = normalizeDate(dateKey); // Ensure dateKey matches format
+                        const normalizedDateKey = normalizeDate(dateKey);
+                        const hebrewDate = HebrewDate(dateKey);
+
                         return (
-                            <div  key={i} className="cellDay">
-                                <span className="dayLabel" onClick={() => openAddFreeTreatment(day)}>{day}</span>
+                            <div key={i} className={normalizedDateKey === normalizeDate(today) ? "todayCell" : "cellDay"}>
+                                <span className="dayLabel" onClick={() => openAddFreeTreatment(day)}>{day}({hebrewDate})</span>
                                 <ul dir='rtl'>
                                     {events && events.length > 0 ? (
                                         events
@@ -154,7 +242,7 @@ export const AppointmentCalendar = () => {
                                                 return isMatch;
                                             })
                                             .map((event, idx) => (
-                                                <li key={idx} className='events' onClick={chooseAnAppointment}>{event.eventTime}: {event.freeOrBusy}</li>
+                                                <li key={idx} className='events' onClick={() => chooseAnAppointment(day, event.eventTime)}>{event.eventTime}: {event.freeOrBusy}: {event.patientId}</li>
                                             ))
                                     ) : (
                                         (events[dateKey] || []).map((event, idx) => (
@@ -179,6 +267,21 @@ export const AppointmentCalendar = () => {
                         <input type='time' value={newTime} onChange={(e) => setNewTime(e.target.value)} />
                         <br />
                         <button onClick={addFreeTreatment}>שמירה</button>
+                    </div>
+                </div>
+            )}
+            {saveEventPopup && (
+                <div className='popup-overly'>
+                    <div className='popup'>
+                        <label onClick={closeModal} className="close-modal-btn">
+                            X
+                        </label>
+                        <br />
+                        <label>נקבע טיפול עבור ת.ז {saveEvent.id}</label>
+                        <label>נקבע טיפול בתאריך {saveEvent.eventDate} ובשעה {saveEvent.eventTime}</label>
+                        <br />
+                        <br />
+                        <label className='saveEventBtn' onClick={updateEvent}>אישור</label>
                     </div>
                 </div>
             )}

@@ -29,6 +29,11 @@ button:hover {
     height: 120px;
 }
 
+.todayCell {
+    background-color: rgb(247, 184, 198);
+    padding: 10px;
+    height: 120px;
+}
 
 .daysOfWeek {
     display: grid;
@@ -75,4 +80,11 @@ button:hover {
 
 .events {
     text-align: right;
+}
+
+.saveEventBtn {
+    background-color: #0f8615;
+    padding: 10px;
+    border-radius: 5px;
+    color: aliceblue;
 }
