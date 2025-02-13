@@ -69,8 +69,10 @@ def add_event_to_db(data):
 
 # 
 def get_patient_from_db(patient_id, password):
+    # print(f"Fetching patient with ID: {patient_id} and Password: {password}")
     try:
         patient = Patient.objects(patientId=patient_id, password=password).first()
+        # print(patient)
         return patient
     except Exception as e:
         return {"Error fetching patient": str(e)}

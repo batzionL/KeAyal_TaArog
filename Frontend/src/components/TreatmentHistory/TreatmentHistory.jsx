@@ -6,15 +6,11 @@ export default function TreatmentHistory() {
 
     const location = useLocation();
     const navigate = useNavigate();
-    // const isOwner = location.isOwner;
-    // alert(isOwner)
     const [id, setId] = useState(location.state);
     const [treatment, setTreatment] = useState(null);
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [expandedDiv, setExpandedDiv] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(!id ? true : false);
-    // const [patientId, setPatientId] = useState("");
-    // const [patientDetails, setPatientDetails] = useState({});
 
 
     useEffect(() => {
@@ -56,35 +52,7 @@ export default function TreatmentHistory() {
 
     const addTreatment = () => {
         navigate('/NewTreatment', { state: id });
-        // window.location.href = "/NewTreatment";
     }
-
-    // const getPatientDetails = async () => {
-    // try {
-    // const response = await fetch("/get_patient_details", {
-    // method: "POST",
-    // headers: {
-    // "Content-Type": "application/json",
-    // },
-    // body: JSON.stringify({
-    // patientId: id
-    // }),
-    // });
-    // if (response.ok) {
-    // const data = await response.json();
-    // setPatientDetails(data);
-    // setIsPopupOpen(prevState => !prevState);
-    // }
-    // else {
-    // const errorData = await response.json();
-    // alert(`Error: ${errorData.error}`);
-    // }
-    // } catch (error) {
-    // alert("Failed to validate owner: " + error.message);
-    // }
-    // }
-
-
     return (
         <center >
             {isPopupOpen && (
