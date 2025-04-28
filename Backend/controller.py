@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 # from main import app
-from service import add_patient_to_db, add_treatment_to_db, add_event_to_db, get_patient_from_db, get_patient_by_id_from_db, get_owner_from_db, get_patient_treatments_from_db, get_all_events_from_db, update_event_in_db
+from service import add_patient_to_db, add_treatment_to_db, add_event_to_db, get_patient_from_db, get_patient_by_id_from_db, get_owner_from_db, get_patient_treatments_from_db, get_all_events_from_db, get_all_patients_from_db, update_event_in_db
   
 
 controller_bp = Blueprint("controller", __name__)
@@ -133,22 +133,51 @@ def get_patient_treatments():
 @controller_bp.route("/get_all_events", methods=["GET"])
 def get_all_events():
     try:
-        answer = get_all_events_from_db()
-        if answer:
+        events = get_all_events_from_db()
+        if events:
+            patient_ids = {event.patientId for event in events}
+            patient_names = get_fName_and_lName_by_id(patient_ids)
+            
             events_list = [
                 {
                     "eventDate": event.eventDate,
                     "eventTime": event.eventTime,
-                    "freeOrBusy": event.freeOrBusy
+                    "freeOrBusy": event.freeOrBusy,
+                    "fullName": f"{patient_names.get(str(event.patientId), {}).get('firstName', '')} {patient_names.get(str(event.patientId), {}).get('lastName', '')}".strip()
                 }
-                for event in answer
+                for event in events
             ]
             return jsonify(events_list), 201
         else:
             return jsonify({"error": "Events not found"}), 404
     except Exception as e:
         return jsonify({"Error: ": str(e)}), 500
-    
+
+
+def get_fName_and_lName_by_id(patient_ids):
+    try:
+        all_patients = get_all_patients_from_db()
+        patients_dicts = [patient.to_mongo().to_dict() for patient in all_patients]
+
+        patient_ids = {str(pid) for pid in patient_ids}
+
+        patients_data = {}
+
+        for patient in patients_dicts:
+            patient_id_str = str(patient.get("patientId", ""))
+
+            if patient_id_str in patient_ids:
+                patients_data[patient_id_str] = {
+                    "firstName": patient["firstName"],
+                    "lastName": patient["lastName"]
+                }
+            else:
+                print(f"Skipping {patient_id_str}, not in {patient_ids}")
+        return patients_data
+    except Exception as e:
+        print(f"Error fetching patient names: {e}")
+        return {}
+
 
 
 @controller_bp.route("/update_event", methods=["PUT"])

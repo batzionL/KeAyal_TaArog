@@ -100,7 +100,13 @@ def get_all_events_from_db():
         return events
     except Exception as e:
         return {"Error fetching events": str(e)}
-        
+
+def get_all_patients_from_db():
+    try:
+        patients = Patient.objects()
+        return patients  
+    except Exception as e:
+        return {"Error fetching patients": str(e)}      
 
 def update_event_in_db(eventDate, eventTime):
     try:
