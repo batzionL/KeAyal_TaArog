@@ -1,0 +1,11 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    margin: auto; /* מרכז את הטופס */
+}
+
+textarea{
+    background-color: rgb(226, 211, 192);
+}
