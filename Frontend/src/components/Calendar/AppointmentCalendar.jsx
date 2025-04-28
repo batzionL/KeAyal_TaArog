@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
 import './AppointmentCalendar.css';
 import { HDate } from '@hebcal/core';
 
 export const AppointmentCalendar = () => {
 
+    const location = useLocation();
+    const id = location.state;
+
+    const [flag, setFlag] = useState(false);
     const [events, setEvents] = useState({});
     const today = new Date();
     const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -20,7 +25,29 @@ export const AppointmentCalendar = () => {
 
     useEffect(() => {
         getAllEvents();
+        checkIdOfOwner();
     }, []);
+
+
+    const checkIdOfOwner = async () => {
+        try {
+            const response = await fetch("/get_owner", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id
+                }),
+            });
+            if (response.ok) {
+                setFlag(true)
+                console.log("flag - ", flag);
+            }
+        } catch (error) {
+            console.log("Failed to validate owner: " + error.message);
+        }
+    }
 
     const handleEventAdd = (day) => {
         const dateKey = `${currentYear}-${currentMonth + 1}-${day}`;
@@ -134,7 +161,6 @@ export const AppointmentCalendar = () => {
                 alert("ת.ז כנראה אינה תקינה");
             }
         }
-        //עידכון האירוע  לתפוס וכתיבת שם המטופל ליד התאריך רק מנהל יכול לראות תשם
     }
 
     //
@@ -242,7 +268,10 @@ export const AppointmentCalendar = () => {
                                                 return isMatch;
                                             })
                                             .map((event, idx) => (
-                                                <li key={idx} className='events' onClick={() => chooseAnAppointment(day, event.eventTime)}>{event.eventTime}: {event.freeOrBusy}: {event.patientId}</li>
+                                                flag === true ?
+                                                    <li key={idx} className='events' onClick={() => chooseAnAppointment(day, event.eventTime)}>{event.freeOrBusy}: {event.freeOrBusy} - {event.fullName}</li>
+                                                    :
+                                                    <li key={idx} className='events' onClick={() => chooseAnAppointment(day, event.eventTime)}>{event.eventTime}</li>
                                             ))
                                     ) : (
                                         (events[dateKey] || []).map((event, idx) => (
