@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 function AddPatientForm() {
 
-    const [patient, setPatient] = useState({ firstName: "", lastName: "", patientId: "", email: "", password: "", phone: "", dateOfBirth: "", motherName: "" });
+    const getRandom6DigitNumber = () => Math.floor(100000 + Math.random() * 900000);
+
+    const [patient, setPatient] = useState({ firstName: "", lastName: "", patientId: "", email: "", password: getRandom6DigitNumber().toString(), phone: "", dateOfBirth: "", motherName: "" });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,9 +50,9 @@ function AddPatientForm() {
                 if (checkNum > 9) {
                     checkNum = Math.floor(checkNum / 10) + (checkNum % 10);
                 }
-                checkArray.push(checkNum); // Even index
+                checkArray.push(checkNum);
             } else {
-                checkArray.push(id[i]);  // Odd index
+                checkArray.push(id[i]);
             }
         }
         for (let num of checkArray) {
@@ -58,120 +63,89 @@ function AddPatientForm() {
     }
 
     return (
-        <center dir='rtl'>
-            <div>
-                <h1>הוספת לקוחה:</h1>
-                <br />
-                <div>
-                    <label>
-                        שם פרטי:
-                        <input
-                            type="text"
-                            name='firstName'
-                            value={patient.firstName}
-                            id="idFName"
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        שם משפחה:
-                        <input
-                            type="text"
-                            name='lastName'
-                            id="idLName"
-                            value={patient.lastName}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        תעודת זהות:
-                        <input
-                            type="text"
-                            name='patientId'
-                            id="IdPatient"
-                            value={patient.patientId}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        כתובת מייל:
-                        <input
-                            type="email"
-                            name='email'
-                            id="emailId"
-                            value={patient.email}
-                            onChange={handleChange} />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        סיסמה:
-                        <input
-                            type="password"
-                            name='password'
-                            id="pwdId"
-                            value={patient.password}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        מס' טלפון:
-                        <input
-                            type="text"
-                            name='phone'
-                            id="phoneId"
-                            value={patient.phone}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        תאריך לידה:
-                        <input
-                            type="date"
-                            id="ageId"
-                            name='dateOfBirth'
-                            value={patient.dateOfBirth}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        שם אימא: 
-                        <input
-                            type="text"
-                            id="motherNameId"
-                            name='motherName'
-                            value={patient.motherName}
-                            onChange={handleChange}
-                            required />
-                    </label>
-                </div>
-                <br />
+        <div dir='rtl'>
+            <div className="form-container">
+                <h1 className='h1'>הוספת לקוחה:</h1>
+
+                <strong> שם פרטי:</strong>
+                <input
+                    name='firstName'
+                    value={patient.firstName}
+                    id="idFName"
+                    onChange={handleChange}
+                    required />
+
+                <strong>שם משפחה:</strong>
+                <input
+                    name='lastName'
+                    id="idLName"
+                    value={patient.lastName}
+                    onChange={handleChange}
+                    required />
+
+                <strong>תעודת זהות:</strong>
+                <input
+                    name='patientId'
+                    id="IdPatient"
+                    value={patient.patientId}
+                    onChange={handleChange}
+                    required />
+
+                <strong> כתובת מייל:</strong>
+                <input
+                    type="email"
+                    name='email'
+                    id="emailId"
+                    value={patient.email}
+                    onChange={handleChange} />
+
+
+                <strong>סיסמה:</strong>
+                {/* <div> */}
+                    <input
+                        type={showPassword ? 'text' : 'password'}
+                        name='password'
+                        id="pwdId"
+                        value={patient.password}
+                        onChange={handleChange}
+                        required />
+                    <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={() => setShowPassword(!showPassword)} ></i>
+                {/* </div> */}
+
+                <strong>מס' טלפון:</strong>
+                <input
+                    type="text"
+                    name='phone'
+                    id="phoneId"
+                    value={patient.phone}
+                    onChange={handleChange}
+                    required />
+
+                <strong>תאריך לידה:</strong>
+                <input
+                    type="date"
+                    id="ageId"
+                    name='dateOfBirth'
+                    value={patient.dateOfBirth}
+                    onChange={handleChange}
+                    required />
+
+                <strong>שם אימא:</strong>
+                <input
+                    type="text"
+                    id="motherNameId"
+                    name='motherName'
+                    value={patient.motherName}
+                    onChange={handleChange}
+                    required />
+
                 <button
                     type="submit"
                     onClick={addPatient}>
                     הוספה
                 </button>
             </div>
-        </center >
+        </div >
     );
 };
 

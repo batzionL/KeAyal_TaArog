@@ -11,13 +11,14 @@ export default function TreatmentHistory() {
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [expandedDiv, setExpandedDiv] = useState(null);
     const [isPopupOpen, setIsPopupOpen] = useState(!id ? true : false);
+    const [toHide] = useState(id ? true : false);
 
 
     useEffect(() => {
         if (!isPopupOpen) {
             getTreatmentsHistory();
         }
-    });
+    }, [isPopupOpen]);
 
     const getTreatmentsHistory = async () => {
         try {
@@ -54,7 +55,7 @@ export default function TreatmentHistory() {
         navigate('/NewTreatment', { state: id });
     }
     return (
-        <center >
+        < >
             {isPopupOpen && (
                 <div className="popup-overlay">
                     <div className="popup">
@@ -66,7 +67,7 @@ export default function TreatmentHistory() {
                 </div>
             )}
             <h1>היסטוריית טיפולים</h1>
-            <div className="container">
+            <div className="container" >
                 {treatment && treatment.length > 0 ? (
                     treatment.map((treat, index) => (
                         <div key={index} className={`hover-box ${expandedDiv === index ? "expanded" : ""}`}
@@ -87,7 +88,8 @@ export default function TreatmentHistory() {
                 )
                     : 'No treatment data available'}
             </div>
-            <button onClick={addTreatment}>הוספת טיפול</button>
-        </center>
+
+            {!toHide && <button onClick={addTreatment}>הוספת טיפול</button>}
+        </>
     )
 }

@@ -4,15 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AddTreatment() {
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const location = useLocation();
-    const [patientId, setPatientId] = useState(location.state);
+    const [patientId] = useState(location.state);
 
-    // const [isPopupOpen, setIsPopupOpen] = useState(true);
     const [treatment, setTreatment] = useState({ patientId: "", treatment_date: "", problem: "", TherapeuticProcess: "", homeWork: "" });
     const [patientDetails, setPatientDetails] = useState({});
     const [age, setAge] = useState(null);
-    // const [patientId, setPatientId] = useState("");
 
     const today = new Date();
     const formattedDate = today.toLocaleDateString();
@@ -21,7 +19,7 @@ export default function AddTreatment() {
         if (patientId)
             getPatientDetails();
         setTreatment({ ...treatment, patientId: patientId, treatment_date: today });
-    }, [patientId]);
+    }, []);
 
     useEffect(() => {
         if (patientDetails.age) {
@@ -50,7 +48,6 @@ export default function AddTreatment() {
             if (response.ok) {
                 const data = await response.json();
                 setPatientDetails(data);
-                // setIsPopupOpen(prevState => !prevState);
             }
             else {
                 const errorData = await response.json();
@@ -92,90 +89,54 @@ export default function AddTreatment() {
         }
     }
 
-
-
     return (
         <div dir="rtl">
-            <center>
-                <h2>הוספת טיפול:</h2>
-                <br />
-                <div>
-                    <label
-                        name='patientId'
-                        onChange={handleChange}>
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label
-                        name='treatment_date'
-                        value={treatment.treatment_date}
-                        onChange={handleChange}>
-                        תאריך:
-                        {formattedDate}
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>שם: {patientDetails.firstName}</label>
-                </div>
-                <br />
-                <div>
-                    <label>גיל: {age}</label>
-                </div>
-                <br />
-                <div>
-                    <label>שם אימא: {patientDetails.motherName}</label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        בעיה:
-                        <input
-                            type="text"
-                            id="problemId"
-                            name='problem'
-                            value={treatment.problem}
-                            onChange={handleChange}
-                            placeholder="בעיה"
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        תהליך טיפולי:
-                        <input
-                            type="text"
-                            id="dateId"
-                            name='TherapeuticProcess'
-                            value={treatment.TherapeuticProcess}
-                            onChange={handleChange}
-                            placeholder="תהליך טיפולי"
-                            required />
-                    </label>
-                </div>
-                <br />
-                <div>
-                    <label>
-                        תרגילי בית:
-                        <input
-                            type="text"
-                            id="homeWorkId"
-                            name='homeWork'
-                            value={treatment.homeWork}
-                            onChange={handleChange}
-                            placeholder="תרגילי בית"
-                            required />
-                    </label>
-                </div>
-                <br />
-                <button
-                    type="submit"
-                    onClick={addTreatment}>
-                    הוספה
-                </button>
-            </center>
+            <div className="form-container">
+                <h1>הוספת טיפול:</h1>
+
+                <label name='patientId' onChange={handleChange}></label>
+                <label><strong>תאריך:</strong> {formattedDate}</label>
+                <label><strong>שם:</strong> {patientDetails.firstName}</label>
+                <label><strong>גיל:</strong> {age}</label>
+                <label><strong>שם אימא:</strong> {patientDetails.motherName}</label>
+
+                <strong>בעיה:</strong>
+                <textarea
+                    id="problemId"
+                    name="problem"
+                    value={treatment.problem}
+                    onChange={handleChange}
+                    rows="5"
+                    cols="30"
+                    required
+                />
+
+                <strong>תהליך טיפולי:</strong>
+                <textarea
+                    id="dateId"
+                    name="TherapeuticProcess"
+                    value={treatment.TherapeuticProcess}
+                    onChange={handleChange}
+                    rows="5"
+                    cols="30"
+                    required
+                />
+
+                <strong>תרגילי בית:</strong>
+                <textarea
+                    id="homeWorkId"
+                    name="homeWork"
+                    value={treatment.homeWork}
+                    onChange={handleChange}
+                    rows="5"
+                    cols="30"
+                    required
+                />
+            
+            <button type="submit" className="submit-btn" onClick={addTreatment}>
+                הוספה
+            </button>
+            </div>
         </div>
     );
 }

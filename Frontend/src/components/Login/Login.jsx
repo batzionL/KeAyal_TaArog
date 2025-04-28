@@ -4,26 +4,10 @@ import './Login.css';
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const [isVisibleOld, setIsVisibleOld] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [patientId, setPatientId] = useState("");
     const [password, setPassword] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newBtn, setNewBtn] = useState(false);
     const navigate = useNavigate();
-
-
-    /* ------------------------------ */
-    const OldPatient = () => {
-        setIsVisibleOld(!isVisibleOld);
-        setNewBtn(!newBtn);
-    };
-
-
-    /* ------------------------------ */
-    const newPatient = () => {
-        navigate("/Calander");
-    }
 
 
     /* ------------------------------ */
@@ -55,26 +39,15 @@ export default function Login() {
                 }
             } else {
                 const errorData = await response.json();
-                alert(`Error: ${errorData.error}`);
+                console.log(`Error: ${errorData.error}`);
             }
         } catch (error) {
-            alert("Failed to validate patient: " + error.message);
+            console.log("Failed to validate patient: " + error.message);
         }
     };
 
-
     /* ------------------------------ */
-    const closeModal = () => setIsModalOpen(false);
-
-
-    /* ------------------------------ */
-    const isOwner = () => {
-        setIsModalOpen(!isModalOpen);
-    }
-
-
-    /* ------------------------------ */
-    const ownerLogin = async (dataPass) => {
+const ownerLogin = async (dataPass) => {
         try {
             const response = await fetch("/get_owner", {
                 method: "POST",
@@ -94,57 +67,30 @@ export default function Login() {
                 console.log('This patient is not an owner');
             }
         } catch (error) {
-            alert("Failed to validate owner: " + error.message);
+            console.log("Failed to validate owner: " + error.message);
         }
     }
 
     return (
         <div >
-            <button onClick={isOwner} className="isOwner">מנהלת</button>
             <center>
-                <div style={{ display: isModalOpen ? "block" : "none" }} className="modal-overlay">
-                    <div className="modal-content">
-                        <button onClick={closeModal} className="close-modal-btn">
-                            X
-                        </button>
-                        <label>הכניסי תז</label>
-                        <input type="text" id="IdPatient" className="form-control mb-3" value={patientId} onChange={(e) => setPatientId(e.target.value)} required />
-                        <div className="form-group mb-3">
-                            <label>הכניסי סיסמה</label>
-                            <div >
-                                <input className="form-control mb-3" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
-                                {/* to check why the eye doesnt work */}
-                                {/* <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={showPass}></i> */}
-                            </div>
-                        </div>
-                        <button className="ownerLoginBtn" type="submit" onClick={validatePatient}>
-                            כניסה
-                        </button>
-                    </div>
-                </div>
-
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <div className="clientsBtn" >
-                        <h1 className="mb-4">ברוכות הבאות</h1>
-                        <button id="btnOldPatient" className="btn custom-btn mb-2 oldClient" onClick={OldPatient}>
-                            מטופלת ותיקה
-                        </button>
-                        <div style={{ display: isVisibleOld ? "block" : "none" }}>
-                            <label>הכניסי תז</label>
+                        <h1 className="titleLogin">ברוכה הבאה</h1>
+                        <br />
+                        <br />
+                        <div >
+                            <strong>הכניסי תז</strong>
+                            <br />
                             <input type="text" id="IdPatient" className="form-control mb-3" value={patientId} onChange={(e) => setPatientId(e.target.value)} required />
-                            <div className="form-group mb-3">
-                                <label>הכניסי סיסמה</label>
-                                <div >
-                                    <input className="form-control mb-3" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
-                                    {/* to check why the eye doesnt work */}
-                                    <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={showPass}></i>
-                                </div>
+                            <label><strong>הכניסי סיסמה</strong></label>
+                            <br />
+                            <div className="showPass">
+                                <input className="form-control mb-3" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={showPass} ></i>
                             </div>
                         </div>
 
-                        <button id="btnNewPatient" className="btn custom-btn mb-4 newClient" onClick={newPatient} style={{ display: !newBtn ? "block" : "none" }}>
-                            מטופלת חדשה
-                        </button>
                         <button className="loginBtn" type="submit" onClick={validatePatient}>
                             כניסה
                         </button>
