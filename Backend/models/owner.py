@@ -1,5 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField, IntField, ReferenceField
-from datetime import datetime
+from mongoengine import Document, IntField
 
 class Owner(Document):
     ownerId = IntField()

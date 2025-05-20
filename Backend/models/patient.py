@@ -4,7 +4,6 @@ class Patient(Document):
     firstName = StringField(required=True)
     lastName = StringField(required=True)
     dateOfBirth = DateField(required=True)
-    # age = IntField()
     motherName = StringField(required=True)
     patientId = IntField(required=True)
     email = StringField()
