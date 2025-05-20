@@ -1,4 +1,3 @@
-// import { useState, useEffect } from "react";
 import './FirstPage.css'
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -18,7 +17,7 @@ export default function FirstPage() {
     }
 
     const addPatient = () => {
-        window.location.href = "/Patient";
+        navigate('/Patient', { state: data.name });
     }
 
     const oldPatient = () => {
@@ -32,7 +31,7 @@ export default function FirstPage() {
     return (
         <center>
             <div>
-                <h1>שלום {data.name}</h1>
+                <h1>שלום {data?.name ? data.name : data}</h1>
 
             </div>
             <p className="idOfBtns">

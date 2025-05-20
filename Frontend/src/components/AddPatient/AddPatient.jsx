@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate, useLocation } from "react-router-dom";
+import './AddPatient.css'
 
 function AddPatientForm() {
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state;
     const getRandom6DigitNumber = () => Math.floor(100000 + Math.random() * 900000);
 
     const [patient, setPatient] = useState({ firstName: "", lastName: "", patientId: "", email: "", password: getRandom6DigitNumber().toString(), phone: "", dateOfBirth: "", motherName: "" });
@@ -31,6 +35,7 @@ function AddPatientForm() {
 
             if (response.ok) {
                 setPatient({ firstName: "", lastName: "", patientId: "", email: "", password: "", phone: "", dateOfBirth: "", motherName: "" });
+                navigate('/OpenPage', {state: data});
             } else {
                 const errorData = await response.json();
                 alert(`Error: ${errorData.error}`);
@@ -101,16 +106,14 @@ function AddPatientForm() {
 
 
                 <strong>סיסמה:</strong>
-                {/* <div> */}
-                    <input
-                        type={showPassword ? 'text' : 'password'}
-                        name='password'
-                        id="pwdId"
-                        value={patient.password}
-                        onChange={handleChange}
-                        required />
-                    <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={() => setShowPassword(!showPassword)} ></i>
-                {/* </div> */}
+                <input
+                    type={showPassword ? 'text' : 'password'}
+                    name='password'
+                    id="pwdId"
+                    value={patient.password}
+                    onChange={handleChange}
+                    required />
+                <i className={`far ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} onClick={() => setShowPassword(!showPassword)} ></i>
 
                 <strong>מס' טלפון:</strong>
                 <input
